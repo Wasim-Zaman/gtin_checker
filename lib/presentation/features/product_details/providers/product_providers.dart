@@ -1,10 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/network/base_client_provider.dart';
 import '../../../../models/product.dart';
 import '../../../../services/product_service.dart';
 
 final productServiceProvider = Provider<ProductApiService>((ref) {
-  return ProductApiService();
+  final baseClient = ref.watch(baseClientProvider);
+  return ProductApiService(client: baseClient);
 });
 
 final productProvider = FutureProvider.family<Products?, String>((

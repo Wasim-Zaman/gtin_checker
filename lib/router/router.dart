@@ -1,12 +1,14 @@
 import 'package:go_router/go_router.dart';
 
-import '../presentation/features/test/view/barcode_test_screen.dart';
+import '../presentation/features/auth/view/login_screen.dart';
 import '../presentation/features/home/view/barcode_verifier_screen.dart';
 import '../presentation/features/product_details/view/product_details_screen.dart';
+import '../presentation/features/test/view/barcode_test_screen.dart';
 
 final router = GoRouter(
-  initialLocation: '/',
+  initialLocation: '/login',
   routes: [
+    GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(
       path: '/',
       builder: (context, state) => const BarcodeVerifierScreen(),
@@ -22,6 +24,5 @@ final router = GoRouter(
         return ProductDetailsScreen(barcode: barcode);
       },
     ),
-    // Add more routes here when needed for GS1 product information
   ],
 );

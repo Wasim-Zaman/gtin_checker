@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="gtin_checker"
+        android:label="gtin checker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

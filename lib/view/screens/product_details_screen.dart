@@ -91,8 +91,8 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
             // If product data is not available but company info exists, show only Company Info tab
             final hasProductData =
                 product.toJson().containsKey('ProductDataAvailable')
-                    ? product.toJson()['ProductDataAvailable']
-                    : true;
+                ? product.toJson()['ProductDataAvailable']
+                : true;
 
             if (!hasProductData) {
               // Automatically switch to Company Info tab
@@ -216,10 +216,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
                 _buildInfoRow(
                   context: context,
                   label: 'Net Content',
-                  value:
-                      product.size != null && product.unit != null
-                          ? '${product.size} ${product.unit}'
-                          : product.size ?? '',
+                  value: product.size != null && product.unit != null
+                      ? '${product.size} ${product.unit}'
+                      : product.size ?? '',
                   colorScheme: colorScheme,
                 ),
                 _buildInfoRow(
@@ -240,11 +239,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
     final colorScheme = Theme.of(context).colorScheme;
     final dateStr =
         product.toJson().containsKey('created_at') &&
-                product.toJson()['created_at'] != null
-            ? _formatDate(product.toJson()['created_at'])
-            : product.createdAt != null
-            ? _formatDate(product.createdAt!)
-            : '';
+            product.toJson()['created_at'] != null
+        ? _formatDate(product.toJson()['created_at'])
+        : product.createdAt != null
+        ? _formatDate(product.createdAt!)
+        : '';
 
     return SingleChildScrollView(
       child: Column(
@@ -366,10 +365,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
 
   Widget _buildGS1StatusCard(BuildContext context, Products product) {
     final colorScheme = Theme.of(context).colorScheme;
-    final companyName =
-        product.toJson().containsKey('companyName')
-            ? product.toJson()['companyName']
-            : 'Company';
+    final companyName = product.toJson().containsKey('companyName')
+        ? product.toJson()['companyName']
+        : 'Company';
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -436,18 +434,16 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12.0),
         decoration: BoxDecoration(
-          border:
-              isSelected
-                  ? Border(
-                    bottom: BorderSide(color: colorScheme.primary, width: 2),
-                  )
-                  : null,
+          border: isSelected
+              ? Border(bottom: BorderSide(color: colorScheme.primary, width: 2))
+              : null,
         ),
         child: Text(
           label,
           style: TextStyle(
-            color:
-                isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+            color: isSelected
+                ? colorScheme.primary
+                : colorScheme.onSurfaceVariant,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
@@ -614,17 +610,15 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
     return Center(
       child: Card(
         elevation: 0,
-        color:
-            isNotFoundError
-                ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.1)
-                : colorScheme.errorContainer.withValues(alpha: 0.1),
+        color: isNotFoundError
+            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.1)
+            : colorScheme.errorContainer.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color:
-                isNotFoundError
-                    ? colorScheme.outlineVariant
-                    : colorScheme.error.withValues(alpha: 0.2),
+            color: isNotFoundError
+                ? colorScheme.outlineVariant
+                : colorScheme.error.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -637,21 +631,19 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color:
-                      isNotFoundError
-                          ? colorScheme.surfaceContainerHighest.withValues(
-                            alpha: 0.5,
-                          )
-                          : colorScheme.errorContainer.withValues(alpha: 0.5),
+                  color: isNotFoundError
+                      ? colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.5,
+                        )
+                      : colorScheme.errorContainer.withValues(alpha: 0.5),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   errorIcon,
                   size: 40,
-                  color:
-                      isNotFoundError
-                          ? colorScheme.onSurfaceVariant
-                          : colorScheme.error,
+                  color: isNotFoundError
+                      ? colorScheme.onSurfaceVariant
+                      : colorScheme.error,
                 ),
               ),
               const SizedBox(height: 24),
@@ -667,10 +659,9 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
                 errorMessage,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color:
-                      isNotFoundError
-                          ? colorScheme.onSurfaceVariant
-                          : colorScheme.error,
+                  color: isNotFoundError
+                      ? colorScheme.onSurfaceVariant
+                      : colorScheme.error,
                 ),
               ),
               const SizedBox(height: 24),
@@ -857,30 +848,28 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
         child: SizedBox(
           height: 250,
           width: double.infinity,
-          child:
-              product.frontImage != null && product.frontImage!.isNotEmpty
-                  ? CachedNetworkImage(
-                    imageUrl: product.frontImage!,
-                    fit: BoxFit.contain,
-                    httpHeaders: {
-                      'Accept':
-                          'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-                      'Accept-Language': 'en-US,en;q=0.9',
-                      'Referer': 'https://gs1.org.sa/',
-                      'User-Agent':
-                          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
-                      'sec-ch-ua':
-                          '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"',
-                      'sec-ch-ua-mobile': '?0',
-                      'sec-ch-ua-platform': '"macOS"',
-                    },
-                    placeholder:
-                        (context, url) => _buildImagePlaceholder(colorScheme),
-                    errorWidget:
-                        (context, url, error) =>
-                            _buildImageWithFallback(url, colorScheme),
-                  )
-                  : _buildImageError(colorScheme),
+          child: product.frontImage != null && product.frontImage!.isNotEmpty
+              ? CachedNetworkImage(
+                  imageUrl: product.frontImage!,
+                  fit: BoxFit.contain,
+                  httpHeaders: {
+                    'Accept':
+                        'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                    'Accept-Language': 'en-US,en;q=0.9',
+                    'Referer': 'https://gs1.org.sa/',
+                    'User-Agent':
+                        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
+                    'sec-ch-ua':
+                        '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"',
+                    'sec-ch-ua-mobile': '?0',
+                    'sec-ch-ua-platform': '"macOS"',
+                  },
+                  placeholder: (context, url) =>
+                      _buildImagePlaceholder(colorScheme),
+                  errorWidget: (context, url, error) =>
+                      _buildImageWithFallback(url, colorScheme),
+                )
+              : _buildImageError(colorScheme),
         ),
       ),
     );

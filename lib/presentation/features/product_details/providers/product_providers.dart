@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/product.dart';
-import '../services/product_service.dart';
+import '../../../../models/product.dart';
+import '../../../../services/product_service.dart';
 
 final productServiceProvider = Provider<ProductApiService>((ref) {
   return ProductApiService();

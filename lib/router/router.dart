@@ -1,8 +1,8 @@
 import 'package:go_router/go_router.dart';
 
-import '../view/screens/barcode_test_screen.dart';
-import '../view/screens/barcode_verifier_screen.dart';
-import '../view/screens/product_details_screen.dart';
+import '../presentation/features/test/view/barcode_test_screen.dart';
+import '../presentation/features/home/view/barcode_verifier_screen.dart';
+import '../presentation/features/product_details/view/product_details_screen.dart';
 
 final router = GoRouter(
   initialLocation: '/',

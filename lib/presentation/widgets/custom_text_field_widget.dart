@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomTextFieldWidget extends StatelessWidget {
+class CustomTextFieldWidget extends StatefulWidget {
   final TextEditingController controller;
   final FocusNode? focusNode;
   final String? hintText;
@@ -8,6 +8,7 @@ class CustomTextFieldWidget extends StatelessWidget {
   final IconData? prefixIcon;
   final Widget? suffixIcon;
   final bool obscureText;
+  final bool isPassword;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onChanged;
@@ -40,6 +41,7 @@ class CustomTextFieldWidget extends StatelessWidget {
     this.prefixIcon,
     this.suffixIcon,
     this.obscureText = false,
+    this.isPassword = false,
     this.keyboardType,
     this.textInputAction,
     this.onChanged,
@@ -65,68 +67,104 @@ class CustomTextFieldWidget extends StatelessWidget {
   });
 
   @override
+  State<CustomTextFieldWidget> createState() => _CustomTextFieldWidgetState();
+}
+
+class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
+  late bool _isObscured;
+
+  @override
+  void initState() {
+    super.initState();
+    _isObscured = widget.isPassword ? true : widget.obscureText;
+  }
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _isObscured = !_isObscured;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
+    Widget? suffixIcon = widget.suffixIcon;
+
+    // If it's a password field, show the visibility toggle
+    if (widget.isPassword) {
+      suffixIcon = IconButton(
+        icon: Icon(
+          _isObscured
+              ? Icons.visibility_off_outlined
+              : Icons.visibility_outlined,
+          color: Colors.grey[600],
+        ),
+        onPressed: _togglePasswordVisibility,
+      );
+    }
+
     return TextField(
-      controller: controller,
-      focusNode: focusNode,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      textInputAction: textInputAction,
-      onChanged: onChanged,
-      onEditingComplete: onEditingComplete,
-      onSubmitted: onSubmitted,
-      enabled: enabled,
-      readOnly: readOnly,
-      maxLines: maxLines,
-      minLines: minLines,
-      maxLength: maxLength,
-      textCapitalization: textCapitalization,
-      style: textStyle ?? const TextStyle(color: Colors.black87, fontSize: 16),
+      controller: widget.controller,
+      focusNode: widget.focusNode,
+      obscureText: _isObscured,
+      keyboardType: widget.keyboardType,
+      textInputAction: widget.textInputAction,
+      onChanged: widget.onChanged,
+      onEditingComplete: widget.onEditingComplete,
+      onSubmitted: widget.onSubmitted,
+      enabled: widget.enabled,
+      readOnly: widget.readOnly,
+      maxLines: widget.maxLines,
+      minLines: widget.minLines,
+      maxLength: widget.maxLength,
+      textCapitalization: widget.textCapitalization,
+      style:
+          widget.textStyle ??
+          const TextStyle(color: Colors.black87, fontSize: 16),
       decoration: InputDecoration(
-        hintText: hintText,
-        labelText: labelText,
-        prefixIcon: prefixIcon != null
+        hintText: widget.hintText,
+        labelText: widget.labelText,
+        prefixIcon: widget.prefixIcon != null
             ? Icon(
-                prefixIcon,
-                color: prefixIconColor ?? Colors.grey[600],
-                size: prefixIconSize ?? 24,
+                widget.prefixIcon,
+                color: widget.prefixIconColor ?? Colors.grey[600],
+                size: widget.prefixIconSize ?? 24,
               )
             : null,
         suffixIcon: suffixIcon,
-        hintStyle: hintStyle ?? TextStyle(color: Colors.grey[500]),
+        hintStyle: widget.hintStyle ?? TextStyle(color: Colors.grey[500]),
         labelStyle:
-            labelStyle ?? TextStyle(color: colorScheme.onSurfaceVariant),
+            widget.labelStyle ?? TextStyle(color: colorScheme.onSurfaceVariant),
         filled: true,
-        fillColor: fillColor ?? Colors.grey[100],
+        fillColor: widget.fillColor ?? Colors.grey[100],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 12),
+          borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 12),
-          borderSide: borderColor != null
-              ? BorderSide(color: borderColor!, width: 1)
+          borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
+          borderSide: widget.borderColor != null
+              ? BorderSide(color: widget.borderColor!, width: 1)
               : BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 12),
+          borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
           borderSide: BorderSide(
-            color: focusedBorderColor ?? colorScheme.primary,
+            color: widget.focusedBorderColor ?? colorScheme.primary,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 12),
+          borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
           borderSide: BorderSide(color: colorScheme.error, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(borderRadius ?? 12),
+          borderRadius: BorderRadius.circular(widget.borderRadius ?? 12),
           borderSide: BorderSide(color: colorScheme.error, width: 2),
         ),
         contentPadding:
-            contentPadding ??
+            widget.contentPadding ??
             const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );

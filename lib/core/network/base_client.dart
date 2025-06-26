@@ -16,9 +16,18 @@ class BaseClient {
   final http.Client _client;
   final Duration timeout;
   final String _baseUrl = ApiUrls.currentBaseURL;
+  String? _accessToken;
 
   BaseClient({http.Client? client, this.timeout = const Duration(minutes: 1)})
     : _client = client ?? http.Client();
+
+  // Set access token for authenticated requests
+  void setAccessToken(String? token) {
+    _accessToken = token;
+  }
+
+  // Get current access token
+  String? get accessToken => _accessToken;
 
   /// Build URL with path parameters and query parameters
   Uri? _buildUrl({
@@ -57,8 +66,10 @@ class BaseClient {
   }) {
     final defaultHeaders = Map<String, String>.from(ApiHeaders.defaultHeaders);
 
-    if (bearerToken != null) {
-      defaultHeaders[ApiHeaders.authorization] = 'Bearer $bearerToken';
+    // Use provided bearer token, otherwise use stored access token
+    final token = bearerToken ?? _accessToken;
+    if (token != null) {
+      defaultHeaders[ApiHeaders.authorization] = 'Bearer $token';
     }
 
     if (headers != null) {

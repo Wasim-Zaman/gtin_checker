@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gtin_checker/models/auth_models.dart';
 
 import '../../../widgets/custom_button_widget.dart';
 import '../../../widgets/custom_text_field_widget.dart';
+import '../providers/auth_providers.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -18,10 +20,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
 
-  bool _obscurePassword = true;
   bool _rememberMe = false;
-  ButtonState _loginButtonState = ButtonState.idle;
-  ButtonState _nfcButtonState = ButtonState.idle;
 
   @override
   void dispose() {
@@ -32,48 +31,77 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     super.dispose();
   }
 
-  void _handleLogin() async {
-    setState(() {
-      _loginButtonState = ButtonState.loading;
-    });
+  Future<void> _handleLogin() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
 
-    // Simulate login process
-    await Future.delayed(const Duration(seconds: 2));
-
-    // Simulate success
-    setState(() {
-      _loginButtonState = ButtonState.success;
-    });
-
-    // Navigate to home screen after success
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      context.go('/');
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter both email and password'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
     }
+
+    await ref.read(authProvider.notifier).login(email, password);
   }
 
-  void _handleNFCLogin() async {
-    setState(() {
-      _nfcButtonState = ButtonState.loading;
-    });
+  Future<void> _handleNfcLogin() async {
+    try {
+      await ref.read(authProvider.notifier).nfcLogin();
 
-    // Simulate NFC login process
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() {
-      _nfcButtonState = ButtonState.success;
-    });
-
-    // Navigate to home screen after success
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      context.go('/');
+      // Navigate to home screen on successful login
+      if (mounted) {
+        context.go('/');
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('NFC Login failed: ${error.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final authState = ref.watch(authProvider);
+
+    // Listen to auth state changes
+    ref.listen<AsyncValue<User?>>(authProvider, (previous, next) {
+      next.when(
+        data: (user) {
+          if (user != null) {
+            // User logged in successfully
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Welcome, ${user.name}!'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            context.go('/');
+          }
+        },
+        loading: () {
+          // Handle loading state if needed
+        },
+        error: (error, stackTrace) {
+          // Show error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${error.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+      );
+    });
 
     return Scaffold(
       body: Container(
@@ -115,7 +143,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'GroutePro',
+                          'GTIN CHECKER',
                           style: TextStyle(
                             color: colorScheme.onPrimary,
                             fontSize: 12,
@@ -185,25 +213,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           controller: _passwordController,
                           focusNode: _passwordFocusNode,
                           hintText: 'Password',
-                          obscureText: _obscurePassword,
+                          isPassword: true,
                           textInputAction: TextInputAction.done,
                           prefixIcon: Icons.lock_outline,
                           prefixIconColor: Colors.grey[600],
                           fillColor: Colors.grey[100],
                           hintStyle: TextStyle(color: Colors.grey[500]),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
-                              color: Colors.grey[600],
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
-                          ),
                           onSubmitted: (_) {
                             _handleLogin();
                           },
@@ -252,8 +267,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         // Login button
                         CustomButtonWidget(
                           text: 'LOGIN',
-                          state: _loginButtonState,
-                          onPressed: _handleLogin,
+                          state: authState.when(
+                            data: (_) => ButtonState.idle,
+                            loading: () => ButtonState.loading,
+                            error: (_, __) => ButtonState.error,
+                          ),
+                          onPressed: authState.isLoading ? null : _handleLogin,
                           width: double.infinity,
                           backgroundColor: colorScheme.primary,
                           foregroundColor: colorScheme.onPrimary,
@@ -295,8 +314,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                         CustomButtonWidget(
                           text: 'TAP NFC CARD',
-                          state: _nfcButtonState,
-                          onPressed: _handleNFCLogin,
+                          onPressed: authState.isLoading
+                              ? null
+                              : _handleNfcLogin,
                           width: double.infinity,
                           backgroundColor: Colors.green,
                           foregroundColor: Colors.white,

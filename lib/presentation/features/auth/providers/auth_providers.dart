@@ -13,15 +13,6 @@ final authServiceProvider = Provider<AuthService>((ref) {
 class AuthNotifier extends AsyncNotifier<User?> {
   @override
   Future<User?> build() async {
-    // // Check if user is already logged in
-    // final prefsService = ref.read(sharedPreferencesServiceProvider);
-    // final user = prefsService.getUser();
-    // final isLoggedIn = prefsService.isLoggedIn();
-
-    // if (isLoggedIn && user != null) {
-    //   return user;
-    // }
-
     return null;
   }
 

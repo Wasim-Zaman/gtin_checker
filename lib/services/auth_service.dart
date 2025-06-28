@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:gtin_checker/core/network/api_urls.dart';
 
 import '../core/network/base_client.dart';
 import '../core/network/base_client_model.dart';
@@ -12,7 +13,7 @@ class AuthService {
   Future<LoginResponse> login(String email, String password) async {
     try {
       final response = await _client.post(
-        'http://localhost:3000/api/v1/users/login',
+        ApiUrls.login,
         body: {'email': email, 'password': password},
       );
 

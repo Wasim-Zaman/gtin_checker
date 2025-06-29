@@ -41,14 +41,13 @@ class CustomButtonWidget extends StatelessWidget {
     Color getBackgroundColor() {
       switch (state) {
         case ButtonState.loading:
-          return backgroundColor?.withOpacity(0.8) ??
-              colorScheme.primary.withOpacity(0.8);
+          return backgroundColor?.withValues(alpha: 0.8) ??
+              colorScheme.primary.withValues(alpha: 0.8);
         case ButtonState.success:
           return colorScheme.tertiary;
         case ButtonState.error:
           return colorScheme.error;
         case ButtonState.idle:
-        default:
           return backgroundColor ?? colorScheme.primary;
       }
     }
@@ -62,7 +61,6 @@ class CustomButtonWidget extends StatelessWidget {
         case ButtonState.error:
           return colorScheme.onError;
         case ButtonState.idle:
-        default:
           return foregroundColor ?? colorScheme.onPrimary;
       }
     }
@@ -113,7 +111,6 @@ class CustomButtonWidget extends StatelessWidget {
             ],
           );
         case ButtonState.idle:
-        default:
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -136,7 +133,7 @@ class CustomButtonWidget extends StatelessWidget {
     }
 
     return SizedBox(
-      width: width,
+      width: width ?? double.infinity,
       height: height,
       child: ElevatedButton(
         onPressed: state == ButtonState.loading ? null : onPressed,

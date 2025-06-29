@@ -6,6 +6,7 @@ import 'package:gtin_checker/models/auth_models.dart';
 import '../../../widgets/custom_button_widget.dart';
 import '../../../widgets/custom_text_field_widget.dart';
 import '../providers/auth_providers.dart';
+import 'widgets/nfc_scan_bottom_sheet.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -49,23 +50,36 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _handleNfcLogin() async {
-    try {
-      await ref.read(authProvider.notifier).nfcLogin();
+    // Show NFC scanning bottom sheet
+    showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      isDismissible: false, // Prevent accidental dismissal during scanning
+      builder: (context) => NfcScanBottomSheet(
+        onNfcScanned: (cardData) async {
+          Navigator.of(context).pop();
 
-      // Navigate to home screen on successful login
-      if (mounted) {
-        context.go('/');
-      }
-    } catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('NFC Login failed: ${error.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+          try {
+            await ref.read(authProvider.notifier).nfcLogin(cardData);
+
+            // Navigation will be handled by the auth state listener
+          } catch (error) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('NFC Login failed: ${error.toString()}'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          }
+        },
+        onCancel: () {
+          Navigator.of(context).pop();
+        },
+      ),
+    );
   }
 
   @override
@@ -254,7 +268,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 'Forgot Password?',
                                 style: TextStyle(
                                   color: colorScheme.primary,
-                                  fontSize: 14,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -278,6 +292,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           foregroundColor: colorScheme.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           fontSize: 16,
+                          
                         ),
                       ],
                     ),

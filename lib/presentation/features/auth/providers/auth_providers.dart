@@ -39,15 +39,24 @@ class AuthNotifier extends AsyncNotifier<User?> {
     }
   }
 
-  Future<void> nfcLogin() async {
+  Future<void> nfcLogin(String nfcCardData) async {
     state = const AsyncValue.loading();
 
     try {
       final authService = ref.read(authServiceProvider);
-      await authService.nfcLogin();
+      final response = await authService.nfcLogin(nfcCardData);
 
-      // TODO: Handle NFC login response when implemented
-      state = const AsyncValue.data(null);
+      // Save token and user data to shared preferences
+      final prefsService = ref.read(sharedPreferencesServiceProvider);
+      await prefsService.saveToken(response.data.token);
+      await prefsService.saveUser(response.data.user);
+      await prefsService.setLoggedIn(true);
+
+      // Update the BaseClient with the new token
+      final baseClient = ref.read(baseClientProvider);
+      baseClient.setAccessToken(response.data.token);
+
+      state = AsyncValue.data(response.data.user);
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }

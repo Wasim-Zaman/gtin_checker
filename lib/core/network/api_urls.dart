@@ -27,8 +27,9 @@ class ApiUrls {
   static const String digitalLinksVideos =
       'https://upchub.online/api/digitalLinks/videos';
 
-  // Auth endpoints (for future use)
+  // Auth endpoints
   static const String login = '/v1/users/login';
+  static const String nfcLogin = '/v1/users/login';
 }
 
 class ApiHeaders {

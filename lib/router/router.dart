@@ -16,9 +16,9 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
       final isLoggedIn = sharedPreferences.isLoggedIn();
 
       // check if the user is logged in and if the current route is login, then redirect to the home screen
-      if (isLoggedIn && state.matchedLocation == '/login') {
-        return '/';
-      }
+      // if (isLoggedIn && state.matchedLocation == '/login') {
+      //   return '/';
+      // }
       return null;
     },
     routes: [

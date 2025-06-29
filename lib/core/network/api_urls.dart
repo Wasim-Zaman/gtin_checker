@@ -4,8 +4,8 @@ class ApiUrls {
   static const String _prodBaseUrl = 'https://gs1.org.sa/api';
 
   // Current environment
-  static const String currentBaseURL = _prodBaseUrl;
-  // static const String currentBaseURL = _devBaseUrl;
+  // static const String currentBaseURL = _prodBaseUrl;
+  static const String currentBaseURL = _devBaseUrl;
 
   // Existing API endpoints from the project
   static const String productDetails =

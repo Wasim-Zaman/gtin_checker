@@ -4,7 +4,7 @@ import 'package:gtin_checker/models/auth_models.dart';
 import 'package:gtin_checker/services/user_service.dart';
 
 final userServiceProvider = Provider<UserApiService>((ref) {
-  final baseClient = ref.watch(baseClientProvider);
+  final baseClient = ref.watch(baseClientProvider(null));
   return UserApiService(client: baseClient);
 });
 

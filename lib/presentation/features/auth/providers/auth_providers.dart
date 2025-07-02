@@ -6,7 +6,9 @@ import '../../../../providers/shared_preferences_provider.dart';
 import '../../../../services/auth_service.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) {
-  final baseClient = ref.watch(baseClientProvider);
+  final baseUrl = "http://localhost:3000/api"; // Use your actual base URL here
+  // final baseUrl = ApiUrls.gtinCheckerBaseUrl;
+  final baseClient = ref.watch(baseClientProvider(baseUrl));
   return AuthService(client: baseClient);
 });
 
@@ -30,7 +32,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
       await prefsService.setLoggedIn(true);
 
       // Update the BaseClient with the new token
-      final baseClient = ref.read(baseClientProvider);
+      final baseClient = ref.read(baseClientProvider(null));
       baseClient.setAccessToken(response.data.token);
 
       state = AsyncValue.data(response.data.user);
@@ -53,7 +55,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
       await prefsService.setLoggedIn(true);
 
       // Update the BaseClient with the new token
-      final baseClient = ref.read(baseClientProvider);
+      final baseClient = ref.read(baseClientProvider(null));
       baseClient.setAccessToken(response.data.token);
 
       state = AsyncValue.data(response.data.user);
@@ -68,7 +70,7 @@ class AuthNotifier extends AsyncNotifier<User?> {
     await prefsService.clearAuthData();
 
     // Clear token from BaseClient
-    final baseClient = ref.read(baseClientProvider);
+    final baseClient = ref.read(baseClientProvider(null));
     baseClient.setAccessToken(null);
 
     state = const AsyncValue.data(null);

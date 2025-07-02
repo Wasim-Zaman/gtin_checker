@@ -2,6 +2,7 @@ class ApiUrls {
   // Base URLs
   static const String _devBaseUrl = 'http://localhost:3000/api';
   static const String _prodBaseUrl = 'https://gs1.org.sa/api';
+  static const String gtinCheckerBaseUrl = 'https://gtinapi.gs1ksa.org/api';
 
   // Current environment
   // static const String currentBaseURL = _prodBaseUrl;

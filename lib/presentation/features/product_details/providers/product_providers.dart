@@ -5,7 +5,7 @@ import '../../../../models/product.dart';
 import '../../../../services/product_service.dart';
 
 final productServiceProvider = Provider<ProductApiService>((ref) {
-  final baseClient = ref.watch(baseClientProvider);
+  final baseClient = ref.watch(baseClientProvider(null));
   return ProductApiService(client: baseClient);
 });
 

@@ -15,11 +15,14 @@ enum RequestMethodName { get, post, put, patch, delete }
 class BaseClient {
   final http.Client _client;
   final Duration timeout;
-  final String _baseUrl = ApiUrls.currentBaseURL;
+  final String? baseUrl;
   String? _accessToken;
 
-  BaseClient({http.Client? client, this.timeout = const Duration(minutes: 1)})
-    : _client = client ?? http.Client();
+  BaseClient({
+    http.Client? client,
+    this.timeout = const Duration(minutes: 1),
+    this.baseUrl = ApiUrls.currentBaseURL,
+  }) : _client = client ?? http.Client();
 
   // Set access token for authenticated requests
   void setAccessToken(String? token) {
@@ -35,7 +38,7 @@ class BaseClient {
     Map<String, String>? pathParams,
     Map<String, String>? queryParams,
   }) {
-    String finalUrl = url.startsWith('http') ? url : '$_baseUrl$url';
+    String finalUrl = url.startsWith('http') ? url : '$baseUrl$url';
 
     // Replace path parameters
     if (pathParams != null) {

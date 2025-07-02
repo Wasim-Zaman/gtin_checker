@@ -1,6 +1,6 @@
 class ApiUrls {
   // Base URLs
-  static const String _devBaseUrl = 'http://localhost:3000/api';
+  static const String _devBaseUrl = 'http://10.0.2.2:3000/api';
   static const String _prodBaseUrl = 'https://gs1.org.sa/api';
   static const String gtinCheckerBaseUrl = 'https://gtinapi.gs1ksa.org/api';
 
@@ -31,6 +31,9 @@ class ApiUrls {
   // Auth endpoints
   static const String login = '/v1/users/login';
   static const String nfcLogin = '/v1/users/login';
+
+  // Report endpoints
+  static const String createReport = '/v1/reports';
 }
 
 class ApiHeaders {

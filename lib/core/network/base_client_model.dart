@@ -21,11 +21,9 @@ class BaseClientModel {
   });
 
   /// Success response
-  const BaseClientModel.success({
-    required this.data,
-    this.statusCode,
-  }) : status = BaseClientStatus.success,
-       message = null;
+  const BaseClientModel.success({required this.data, this.statusCode})
+    : status = BaseClientStatus.success,
+      message = null;
 
   /// Failure response with error message
   const BaseClientModel.failure({

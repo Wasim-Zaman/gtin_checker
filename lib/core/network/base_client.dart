@@ -354,6 +354,95 @@ class BaseClient {
     }
   }
 
+  /// Perform POST request with form data and multiple files with same field name
+  Future<BaseClientModel> postFormDataWithMultipleFiles(
+    String url, {
+    Map<String, String>? headers,
+    Map<String, String>? formFields,
+    Map<String, List<File>>? multipleFiles,
+    Map<String, String>? queryParams,
+    Map<String, String>? pathParams,
+    String? bearerToken,
+  }) async {
+    if (kDebugMode) {
+      print(
+        'POST FormData with Multiple Files request: $url, Query: $queryParams, Path: $pathParams, FormFields: $formFields, MultipleFiles: ${multipleFiles?.map((key, value) => MapEntry(key, value.length))}',
+      );
+    }
+
+    final uri = _buildUrl(
+      url: url,
+      pathParams: pathParams,
+      queryParams: queryParams,
+    );
+
+    if (uri == null) {
+      return const BaseClientModel.unexpectedError(
+        message: 'Invalid URL format',
+      );
+    }
+
+    final requestHeaders = _buildHeaders(
+      headers: headers,
+      bearerToken: bearerToken,
+    );
+
+    try {
+      var request = http.MultipartRequest('POST', uri)
+        ..headers.addAll(requestHeaders);
+
+      // Add form fields
+      if (formFields != null) {
+        request.fields.addAll(formFields);
+      }
+
+      // Add multiple files with same field name
+      if (multipleFiles != null) {
+        for (var entry in multipleFiles.entries) {
+          final fieldName = entry.key;
+          final files = entry.value;
+
+          for (var file in files) {
+            if (await file.exists()) {
+              final mimeType =
+                  lookupMimeType(file.path) ?? 'application/octet-stream';
+              final mediaType = MediaType.parse(mimeType);
+
+              request.files.add(
+                await http.MultipartFile.fromPath(
+                  fieldName,
+                  file.path,
+                  contentType: mediaType,
+                ),
+              );
+            } else {
+              if (kDebugMode) {
+                print('File not found: ${file.path}');
+              }
+              return BaseClientModel.unexpectedError(
+                message: 'File not found: ${file.path}',
+              );
+            }
+          }
+        }
+      }
+
+      final streamedResponse = await request.send().timeout(
+        timeout,
+        onTimeout: () =>
+            throw TimeoutException('POST FormData request timed out'),
+      );
+      final response = await http.Response.fromStream(streamedResponse);
+
+      return _processResponse(
+        response: response,
+        method: RequestMethodName.post,
+      );
+    } catch (error) {
+      return _handleException(error, method: RequestMethodName.post);
+    }
+  }
+
   /// Perform PUT request
   Future<BaseClientModel> put(
     String url, {

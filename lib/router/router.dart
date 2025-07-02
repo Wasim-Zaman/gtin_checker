@@ -5,6 +5,7 @@ import 'package:gtin_checker/providers/shared_preferences_provider.dart';
 import '../presentation/features/auth/view/login_screen.dart';
 import '../presentation/features/home/view/barcode_verifier_screen.dart';
 import '../presentation/features/product_details/view/product_details_screen.dart';
+import '../presentation/features/report/view/create_report_screen.dart';
 import '../presentation/features/test/view/barcode_test_screen.dart';
 
 final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
@@ -37,6 +38,10 @@ final Provider<GoRouter> goRouterProvider = Provider<GoRouter>((ref) {
           final barcode = state.pathParameters['barcode'] ?? '';
           return ProductDetailsScreen(barcode: barcode);
         },
+      ),
+      GoRoute(
+        path: '/report',
+        builder: (context, state) => const CreateReportScreen(),
       ),
     ],
   );

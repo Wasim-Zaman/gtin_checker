@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gtin_checker/core/network/api_urls.dart';
 
 import '../../../../core/network/base_client_provider.dart';
 import '../../../../models/auth_models.dart';
@@ -6,8 +7,7 @@ import '../../../../providers/shared_preferences_provider.dart';
 import '../../../../services/auth_service.dart';
 
 final authServiceProvider = Provider<AuthService>((ref) {
-  final baseUrl = "http://localhost:3000/api"; // Use your actual base URL here
-  // final baseUrl = ApiUrls.gtinCheckerBaseUrl;
+  final baseUrl = ApiUrls.currentBaseURL;
   final baseClient = ref.watch(baseClientProvider(baseUrl));
   return AuthService(client: baseClient);
 });

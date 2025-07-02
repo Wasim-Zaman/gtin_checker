@@ -88,7 +88,7 @@ class ProductErrorState extends StatelessWidget {
                   ),
                   const SizedBox(width: 16),
                   OutlinedButton(
-                    onPressed: () => context.pop(),
+                    onPressed: () => context.go('/report'),
                     child: const Text('Make a Report'),
                   ),
                 ],

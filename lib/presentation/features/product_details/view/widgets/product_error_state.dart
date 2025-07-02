@@ -80,10 +80,16 @@ class ProductErrorState extends StatelessWidget {
               const SizedBox(height: 24),
               Row(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   OutlinedButton(
                     onPressed: () => context.pop(),
                     child: const Text('Go Back'),
+                  ),
+                  const SizedBox(width: 16),
+                  OutlinedButton(
+                    onPressed: () => context.pop(),
+                    child: const Text('Make a Report'),
                   ),
                 ],
               ),

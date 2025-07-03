@@ -1,8 +1,9 @@
 class ApiUrls {
   // Base URLs
   static const String _devBaseUrl = 'http://10.0.2.2:3000/api';
-  static const String _prodBaseUrl = 'https://gs1.org.sa/api';
-  static const String gtinCheckerBaseUrl = 'https://gtinapi.gs1ksa.org/api';
+  static const String _prodBaseUrl = 'https://gtiapi.gs1ksa.org/api';
+  static const String upcHubUrl = 'https://upchub.online/api/';
+  static const String gtinCheckerBaseUrl = 'https://gtiapi.gs1ksa.org/api';
 
   // Current environment
   // static const String currentBaseURL = _prodBaseUrl;
@@ -12,21 +13,18 @@ class ApiUrls {
   static const String productDetails =
       'https://gs1.org.sa/api/foreignGtin/getGtinProductDetails';
   static const String digitalLinksRetailers =
-      'https://upchub.online/api/digitalLinks/retailers';
+      '${upcHubUrl}digitalLinks/retailers';
   static const String digitalLinksPackagings =
-      'https://upchub.online/api/digitalLinks/packagings';
+      '${upcHubUrl}digitalLinks/packagings';
   static const String digitalLinksIngredients =
-      'https://upchub.online/api/digitalLinks/ingredients';
+      '${upcHubUrl}digitalLinks/ingredients';
   static const String digitalLinksPromotions =
-      'https://upchub.online/api/digitalLinks/promotions';
-  static const String digitalLinksRecipes =
-      'https://upchub.online/api/digitalLinks/recipes';
+      '${upcHubUrl}digitalLinks/promotions';
+  static const String digitalLinksRecipes = '${upcHubUrl}digitalLinks/recipes';
   static const String digitalLinksLeaflets =
-      'https://upchub.online/api/digitalLinks/leaflets';
-  static const String digitalLinksImages =
-      'https://upchub.online/api/digitalLinks/images';
-  static const String digitalLinksVideos =
-      'https://upchub.online/api/digitalLinks/videos';
+      '${upcHubUrl}digitalLinks/leaflets';
+  static const String digitalLinksImages = '${upcHubUrl}digitalLinks/images';
+  static const String digitalLinksVideos = '${upcHubUrl}digitalLinks/videos';
 
   // Auth endpoints
   static const String login = '/v1/users/login';

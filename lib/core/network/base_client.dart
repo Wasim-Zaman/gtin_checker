@@ -39,7 +39,9 @@ class BaseClient {
     Map<String, String>? queryParams,
   }) {
     String finalUrl = url.startsWith('http') ? url : '$baseUrl$url';
-
+    if (kDebugMode) {
+      print('Building URL: $finalUrl');
+    }
     // Replace path parameters
     if (pathParams != null) {
       pathParams.forEach((key, value) {

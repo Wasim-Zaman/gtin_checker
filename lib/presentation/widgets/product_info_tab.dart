@@ -179,8 +179,9 @@ class ProductInfoTab extends ConsumerWidget {
             asyncValue: instructionsAsync,
             onExpand: () {
               ref
-                  .read(instructionLoadingStateProvider(barcode).notifier)
-                  .state = true;
+                      .read(instructionLoadingStateProvider(barcode).notifier)
+                      .state =
+                  true;
             },
             contentBuilder: (isLoading, hasError, error) {
               if (isLoading) {
@@ -365,8 +366,9 @@ class ProductInfoTab extends ConsumerWidget {
             asyncValue: ref.watch(productImagesProvider(barcode)),
             onExpand: () {
               ref
-                  .read(productImageLoadingStateProvider(barcode).notifier)
-                  .state = true;
+                      .read(productImageLoadingStateProvider(barcode).notifier)
+                      .state =
+                  true;
             },
             contentBuilder: (isLoading, hasError, error) {
               if (isLoading) {
@@ -403,8 +405,9 @@ class ProductInfoTab extends ConsumerWidget {
             asyncValue: ref.watch(productVideosProvider(barcode)),
             onExpand: () {
               ref
-                  .read(productVideoLoadingStateProvider(barcode).notifier)
-                  .state = true;
+                      .read(productVideoLoadingStateProvider(barcode).notifier)
+                      .state =
+                  true;
             },
             contentBuilder: (isLoading, hasError, error) {
               if (isLoading) {
@@ -484,7 +487,7 @@ class ProductInfoTab extends ConsumerWidget {
                             color: _getSeverityColor(
                               allergen.severity,
                               colorScheme,
-                            ).withOpacity(0.2),
+                            ).withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -526,7 +529,7 @@ class ProductInfoTab extends ConsumerWidget {
                             color: _getSeverityColor(
                               allergen.severity,
                               colorScheme,
-                            ).withOpacity(0.2),
+                            ).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -645,9 +648,9 @@ class ProductInfoTab extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

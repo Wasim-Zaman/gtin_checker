@@ -29,7 +29,7 @@ class BarcodeTestScreen extends ConsumerWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              colorScheme.surfaceContainerHighest.withOpacity(0.3),
+              colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
               colorScheme.surface,
             ],
           ),
@@ -72,20 +72,18 @@ class BarcodeTestScreen extends ConsumerWidget {
                   }
                   return _buildResultSection(context, result);
                 },
-                loading:
-                    () => const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(32.0),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                error:
-                    (error, stackTrace) => _buildResultCard(
-                      'Error',
-                      error.toString(),
-                      Icons.error_outline,
-                      isError: true,
-                    ),
+                loading: () => const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(32.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                error: (error, stackTrace) => _buildResultCard(
+                  'Error',
+                  error.toString(),
+                  Icons.error_outline,
+                  isError: true,
+                ),
               ),
             ],
           ),
@@ -101,7 +99,7 @@ class BarcodeTestScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -224,10 +222,9 @@ class BarcodeTestScreen extends ConsumerWidget {
       backgroundColor: colorScheme.surfaceContainerHighest,
       selectedColor: colorScheme.primaryContainer,
       labelStyle: TextStyle(
-        color:
-            selected
-                ? colorScheme.onPrimaryContainer
-                : colorScheme.onSurfaceVariant,
+        color: selected
+            ? colorScheme.onPrimaryContainer
+            : colorScheme.onSurfaceVariant,
         fontWeight: selected ? FontWeight.bold : FontWeight.normal,
       ),
       elevation: selected ? 2 : 0,
@@ -272,10 +269,9 @@ class BarcodeTestScreen extends ConsumerWidget {
             Wrap(
               spacing: 8,
               runSpacing: 12,
-              children:
-                  samples.map((sample) {
-                    return _buildActionChip(context, sample, ref);
-                  }).toList(),
+              children: samples.map((sample) {
+                return _buildActionChip(context, sample, ref);
+              }).toList(),
             ),
           ],
         ),
@@ -310,10 +306,10 @@ class BarcodeTestScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withOpacity(0.7),
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: colorScheme.outline.withOpacity(0.3),
+              color: colorScheme.outline.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
@@ -343,7 +339,7 @@ class BarcodeTestScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: colorScheme.outlineVariant, width: 1),
       ),
@@ -352,7 +348,7 @@ class BarcodeTestScreen extends ConsumerWidget {
           Icon(
             Icons.touch_app,
             size: 48,
-            color: colorScheme.primary.withOpacity(0.7),
+            color: colorScheme.primary.withValues(alpha: 0.7),
           ),
           const SizedBox(height: 16),
           Text(
@@ -367,7 +363,7 @@ class BarcodeTestScreen extends ConsumerWidget {
           Text(
             'Results will appear here',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant.withOpacity(0.7),
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
             ),
             textAlign: TextAlign.center,
           ),
@@ -386,8 +382,8 @@ class BarcodeTestScreen extends ConsumerWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                colorScheme.primary.withOpacity(0.1),
-                colorScheme.primaryContainer.withOpacity(0.3),
+                colorScheme.primary.withValues(alpha: 0.1),
+                colorScheme.primaryContainer.withValues(alpha: 0.3),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -441,33 +437,29 @@ class BarcodeTestScreen extends ConsumerWidget {
       builder: (context) {
         final colorScheme = Theme.of(context).colorScheme;
 
-        final Color cardColor =
-            highlight
-                ? colorScheme.primaryContainer.withOpacity(0.7)
-                : isError
-                ? colorScheme.errorContainer.withOpacity(0.7)
-                : colorScheme.surface;
+        final Color cardColor = highlight
+            ? colorScheme.primaryContainer.withValues(alpha: 0.7)
+            : isError
+            ? colorScheme.errorContainer.withValues(alpha: 0.7)
+            : colorScheme.surface;
 
-        final Color iconColor =
-            highlight
-                ? colorScheme.primary
-                : isError
-                ? colorScheme.error
-                : colorScheme.primary.withOpacity(0.7);
+        final Color iconColor = highlight
+            ? colorScheme.primary
+            : isError
+            ? colorScheme.error
+            : colorScheme.primary.withValues(alpha: 0.7);
 
-        final Color titleColor =
-            highlight
-                ? colorScheme.onPrimaryContainer
-                : isError
-                ? colorScheme.error
-                : colorScheme.onSurfaceVariant;
+        final Color titleColor = highlight
+            ? colorScheme.onPrimaryContainer
+            : isError
+            ? colorScheme.error
+            : colorScheme.onSurfaceVariant;
 
-        final Color valueColor =
-            highlight
-                ? colorScheme.onPrimaryContainer
-                : isError
-                ? colorScheme.onErrorContainer
-                : colorScheme.onSurface;
+        final Color valueColor = highlight
+            ? colorScheme.onPrimaryContainer
+            : isError
+            ? colorScheme.onErrorContainer
+            : colorScheme.onSurface;
 
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
@@ -476,12 +468,11 @@ class BarcodeTestScreen extends ConsumerWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
-              color:
-                  highlight
-                      ? colorScheme.primary.withOpacity(0.3)
-                      : isError
-                      ? colorScheme.error.withOpacity(0.3)
-                      : colorScheme.outlineVariant,
+              color: highlight
+                  ? colorScheme.primary.withValues(alpha: 0.3)
+                  : isError
+                  ? colorScheme.error.withValues(alpha: 0.3)
+                  : colorScheme.outlineVariant,
               width: highlight || isError ? 1.5 : 1,
             ),
           ),
@@ -491,14 +482,13 @@ class BarcodeTestScreen extends ConsumerWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    color:
-                        highlight
-                            ? colorScheme.primary.withOpacity(0.1)
-                            : isError
-                            ? colorScheme.error.withOpacity(0.1)
-                            : colorScheme.surfaceContainerHighest.withOpacity(
-                              0.5,
-                            ),
+                    color: highlight
+                        ? colorScheme.primary.withValues(alpha: 0.1)
+                        : isError
+                        ? colorScheme.error.withValues(alpha: 0.1)
+                        : colorScheme.surfaceContainerHighest.withValues(
+                            alpha: 0.5,
+                          ),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   padding: const EdgeInsets.all(10),
@@ -522,8 +512,9 @@ class BarcodeTestScreen extends ConsumerWidget {
                         value,
                         style: TextStyle(
                           fontSize: 16,
-                          fontWeight:
-                              highlight ? FontWeight.bold : FontWeight.w500,
+                          fontWeight: highlight
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                           color: valueColor,
                         ),
                       ),
@@ -549,7 +540,6 @@ class BarcodeTestScreen extends ConsumerWidget {
       case BarcodeType.gs1DigitalLink:
         return 'GS1 Digital Link';
       case BarcodeType.unknown:
-      default:
         return 'Unknown';
     }
   }
@@ -565,7 +555,6 @@ class BarcodeTestScreen extends ConsumerWidget {
       case BarcodeType.gs1DigitalLink:
         return Icons.link;
       case BarcodeType.unknown:
-      default:
         return Icons.help_outline;
     }
   }

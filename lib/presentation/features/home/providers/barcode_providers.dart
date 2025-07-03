@@ -25,10 +25,9 @@ class BarcodeService {
 
     try {
       // Use codeType if provided (from a real scanner)
-      BarcodeType detectedType =
-          codeType != null
-              ? _convertToType(codeType)
-              : _detectBarcodeType(value);
+      BarcodeType detectedType = codeType != null
+          ? _convertToType(codeType)
+          : _detectBarcodeType(value);
 
       String? gtin = await _extractGTIN(value, detectedType);
       Map<String, dynamic>? additionalData;
@@ -190,7 +189,6 @@ class BarcodeService {
         return null;
 
       case BarcodeType.unknown:
-      default:
         // Try to extract GTIN if it's a numeric string of correct length
         if (RegExp(r'^\d{8,14}$').hasMatch(value)) {
           return value;

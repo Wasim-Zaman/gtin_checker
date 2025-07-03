@@ -59,7 +59,7 @@ class InstructionContent extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: colorScheme.tertiary.withOpacity(0.2),
+                    color: colorScheme.tertiary.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

@@ -54,7 +54,7 @@ class RetailerContent extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: colorScheme.primary.withOpacity(0.2),
+                            color: colorScheme.primary.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -128,7 +128,7 @@ class RetailerContent extends StatelessWidget {
   ) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: colorScheme.primary.withOpacity(0.7)),
+        Icon(icon, size: 16, color: colorScheme.primary.withValues(alpha: 0.7)),
         const SizedBox(width: 8),
         Text(
           label,

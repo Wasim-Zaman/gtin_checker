@@ -34,6 +34,9 @@ class ApiUrls {
 
   // Report endpoints
   static const String createReport = '/v1/reports';
+
+  // Product endpoints
+  static const String submitProduct = '/v1/products';
 }
 
 class ApiHeaders {

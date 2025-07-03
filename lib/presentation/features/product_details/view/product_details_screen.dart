@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../widgets/product_additional_info_tab.dart';
 import '../providers/product_providers.dart';
 import 'widgets/company_info_tab_content.dart';
-import '../../../widgets/product_additional_info_tab.dart';
 import 'widgets/product_error_state.dart';
 import 'widgets/product_info_tab_content.dart';
 
@@ -44,13 +44,11 @@ class _ProductDetailsScreenState extends ConsumerState<ProductDetailsScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Details'),
-        backgroundColor: colorScheme.surfaceContainerHighest,
-        elevation: 0,
-        scrolledUnderElevation: 3,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.go('/'),
         ),
+
         bottom: TabBar(
           controller: _mainTabController,
           labelColor: colorScheme.primary,

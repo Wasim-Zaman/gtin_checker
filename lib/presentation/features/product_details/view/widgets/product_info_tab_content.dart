@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:gtin_checker/presentation/widgets/custom_button_widget.dart';
 
 import '../../../../../models/product.dart';
+import '../../providers/product_submit_providers.dart';
 
-class ProductInfoTabContent extends StatelessWidget {
+class ProductInfoTabContent extends ConsumerWidget {
   final Products product;
   final ColorScheme colorScheme;
   final VoidCallback onCompanyInfoTap;
@@ -18,7 +19,36 @@ class ProductInfoTabContent extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final submitState = ref.watch(submitProductManuallyProvider);
+
+    // Listen to submit state changes for showing feedback
+    ref.listen<AsyncValue<dynamic>>(submitProductManuallyProvider, (
+      previous,
+      next,
+    ) {
+      next.whenOrNull(
+        data: (response) {
+          if (response != null && response.success) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(response.message),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        },
+        error: (error, _) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $error'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        },
+      );
+    });
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,6 +58,26 @@ class ProductInfoTabContent extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: _buildGS1StatusCard(context, product),
           ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CustomButtonWidget(
+                  text: submitState.isLoading ? "Submitting..." : "Submit Data",
+                  width: 200,
+                  onPressed: submitState.isLoading
+                      ? null
+                      : () {
+                          _handleSubmitData(context, ref);
+                        },
+                ),
+              ],
+            ),
+          ),
+
+          const Divider(),
 
           // Tabs Bar
           Container(
@@ -123,6 +173,38 @@ class ProductInfoTabContent extends StatelessWidget {
     );
   }
 
+  void _handleSubmitData(BuildContext context, WidgetRef ref) {
+    final scanningTime = DateTime.now();
+
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Submit Product Data'),
+          content: Text(
+            'Are you sure you want to submit data for GTIN: ${product.barcode}?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                ref
+                    .read(submitProductManuallyProvider.notifier)
+                    .submitProduct(product, scanningTime);
+              },
+              child: const Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _buildGS1StatusCard(BuildContext context, Products product) {
     final companyName = product.toJson().containsKey('companyName')
         ? product.toJson()['companyName']
@@ -188,14 +270,17 @@ class ProductInfoTabContent extends StatelessWidget {
     required ColorScheme colorScheme,
     VoidCallback? onTap,
   }) {
-    return InkWell(
+    return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 0),
         decoration: BoxDecoration(
-          border: isSelected
-              ? Border(bottom: BorderSide(color: colorScheme.primary, width: 2))
-              : null,
+          border: Border(
+            bottom: BorderSide(
+              color: isSelected ? colorScheme.primary : Colors.transparent,
+              width: 2,
+            ),
+          ),
         ),
         child: Text(
           label,
@@ -206,39 +291,6 @@ class ProductInfoTabContent extends StatelessWidget {
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow({
-    required BuildContext context,
-    required String label,
-    required String value,
-    required ColorScheme colorScheme,
-  }) {
-    if (value.isEmpty) return const SizedBox.shrink();
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              color: colorScheme.onSurface,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Divider(color: colorScheme.outlineVariant, height: 1),
-        ],
       ),
     );
   }
@@ -296,74 +348,78 @@ class ProductInfoTabContent extends StatelessWidget {
     );
   }
 
-  // Try to load image using http client with custom headers as fallback
   Widget _buildImageWithFallback(String url, ColorScheme colorScheme) {
-    return FutureBuilder(
-      future: _loadImageWithCustomHeaders(url),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildImagePlaceholder(colorScheme);
-        } else if (snapshot.hasData && snapshot.data != null) {
-          return Image.memory(snapshot.data!, fit: BoxFit.contain);
-        } else {
-          return _buildImageError(colorScheme);
-        }
-      },
+    return Container(
+      color: colorScheme.surfaceContainerHighest,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.broken_image,
+            size: 48,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Image Not Found',
+            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16),
+          ),
+        ],
+      ),
     );
-  }
-
-  Future<Uint8List?> _loadImageWithCustomHeaders(String url) async {
-    try {
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Accept':
-              'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.9',
-          'Referer': 'https://gs1.org.sa/',
-          'User-Agent':
-              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
-          'sec-ch-ua':
-              '"Chromium";v="136", "Google Chrome";v="136", "Not.A/Brand";v="99"',
-          'sec-ch-ua-mobile': '?0',
-          'sec-ch-ua-platform': '"macOS"',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        return response.bodyBytes;
-      }
-      return null;
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error loading image with custom headers: $e');
-      }
-      return null;
-    }
   }
 
   Widget _buildImageError(ColorScheme colorScheme) {
     return Container(
       color: colorScheme.surfaceContainerHighest,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.image_not_supported,
-              size: 60,
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'No image available',
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.image_not_supported,
+            size: 48,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'No Image Available',
+            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow({
+    required BuildContext context,
+    required String label,
+    required String value,
+    required ColorScheme colorScheme,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
               style: TextStyle(
+                fontWeight: FontWeight.w600,
                 color: colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              value.isNotEmpty ? value : 'N/A',
+              style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -146,7 +146,6 @@ class _BarcodeVerifierScreenState extends ConsumerState<BarcodeVerifierScreen>
       case BarcodeType.gs1DigitalLink:
         return 'GS1 Digital Link';
       case BarcodeType.unknown:
-      default:
         return 'Unknown';
     }
   }
@@ -162,7 +161,6 @@ class _BarcodeVerifierScreenState extends ConsumerState<BarcodeVerifierScreen>
       case BarcodeType.gs1DigitalLink:
         return Icons.link;
       case BarcodeType.unknown:
-      default:
         return Icons.help_outline;
     }
   }
@@ -224,8 +222,8 @@ class _BarcodeVerifierScreenState extends ConsumerState<BarcodeVerifierScreen>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                colorScheme.surfaceContainerHighest.withOpacity(0.3),
-                colorScheme.surface.withOpacity(0.9),
+                colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                colorScheme.surface.withValues(alpha: 0.9),
               ],
               stops: const [0.0, 0.7],
             ),

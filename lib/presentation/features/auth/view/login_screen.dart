@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gtin_checker/core/constants/app_constants.dart';
 import 'package:gtin_checker/models/auth_models.dart';
 
 import '../../../widgets/custom_button_widget.dart';
@@ -133,42 +134,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Logo section
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: colorScheme.primary.withValues(alpha: 0.3),
-                          blurRadius: 20,
-                          spreadRadius: 5,
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.qr_code_scanner,
-                          color: colorScheme.onPrimary,
-                          size: 40,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'GTIN CHECKER',
-                          style: TextStyle(
-                            color: colorScheme.onPrimary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
+                  SizedBox(
+                    width: 240,
+                    height: 240,
+                    child: Image.asset(kGs1Logo),
                   ),
 
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 16),
 
                   // Title
                   Text(
@@ -292,7 +264,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           foregroundColor: colorScheme.onPrimary,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           fontSize: 16,
-                          
                         ),
                       ],
                     ),

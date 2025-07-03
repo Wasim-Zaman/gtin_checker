@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:gtin_checker/presentation/widgets/custom_button_widget.dart';
+import 'package:gtin_checker/presentation/widgets/custom_text_field_widget.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../../models/report.dart';
@@ -56,7 +58,7 @@ class _CreateReportScreenState extends ConsumerState<CreateReportScreen> {
         final currentImages = ref.read(reportImagesProvider);
         final newImages = pickedFiles.map((xFile) => File(xFile.path)).toList();
         final allImages = [...currentImages, ...newImages];
-        final limitedImages = allImages.take(3).toList(); // Reduce to 3 images
+        final limitedImages = allImages.take(5).toList(); // Reduce to 3 images
 
         ref.read(reportImagesProvider.notifier).state = limitedImages;
       }
@@ -80,7 +82,7 @@ class _CreateReportScreenState extends ConsumerState<CreateReportScreen> {
 
       if (pickedFile != null) {
         final currentImages = ref.read(reportImagesProvider);
-        if (currentImages.length < 3) {
+        if (currentImages.length < 5) {
           final newImages = [...currentImages, File(pickedFile.path)];
           ref.read(reportImagesProvider.notifier).state = newImages;
         } else {
@@ -179,136 +181,409 @@ class _CreateReportScreenState extends ConsumerState<CreateReportScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Create Report'),
+        elevation: 0,
+        scrolledUnderElevation: 3,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // GTIN Input
-            TextField(
-              controller: _gtinController,
-              decoration: InputDecoration(
-                labelText: 'Product GTIN',
-                hintText: 'Enter product GTIN',
-                prefixIcon: const Icon(Icons.qr_code_scanner),
-                suffixIcon: gtin.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: _clearGtin,
-                      )
-                    : null,
-                border: const OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-              onChanged: (value) => _processGtin(),
-            ),
-
-            const SizedBox(height: 20),
-
-            // Images Section
-            Text(
-              'Product Images (${images.length}/3)',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-
-            const SizedBox(height: 10),
-
-            // Image Grid
-            if (images.isNotEmpty)
-              SizedBox(
-                height: 100,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: images.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              images[index],
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              colorScheme.surface.withValues(alpha: 0.9),
+            ],
+            stops: const [0.0, 0.7],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Section
+                Container(
+                  decoration: BoxDecoration(
+                    color: colorScheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer.withValues(
+                            alpha: 0.3,
                           ),
-                          Positioned(
-                            top: 4,
-                            right: 4,
-                            child: GestureDetector(
-                              onTap: () => _removeImage(index),
-                              child: Container(
-                                padding: const EdgeInsets.all(2),
-                                decoration: const BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
+                          shape: BoxShape.circle,
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Icon(
+                          Icons.report_problem_outlined,
+                          color: colorScheme.primary,
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Report Product Issue',
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface,
+                                  ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Help us improve product information',
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // GTIN Input Section
+                Card(
+                  elevation: 0,
+                  color: colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: colorScheme.outlineVariant,
+                      width: 1,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.qr_code_scanner,
+                              color: colorScheme.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Product Information',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        CustomTextFieldWidget(
+                          controller: _gtinController,
+                          suffixIcon: gtin.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(
+                                    Icons.clear,
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                  onPressed: _clearGtin,
+                                )
+                              : null,
+                          prefixIcon: Icons.tag,
+                          hintText: "Enter Product GTIN",
+                          labelText: "Product GTIN",
+                          keyboardType: TextInputType.number,
+                          onChanged: (value) => _processGtin(),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Images Section
+                Card(
+                  elevation: 0,
+                  color: colorScheme.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(
+                      color: colorScheme.outlineVariant,
+                      width: 1,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.photo_camera_outlined,
+                              color: colorScheme.primary,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Product Images',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface,
+                                  ),
+                            ),
+                            const Spacer(),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.primaryContainer.withValues(
+                                  alpha: 0.5,
                                 ),
-                                child: const Icon(
-                                  Icons.close,
-                                  size: 16,
-                                  color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                '${images.length}/5',
+                                style: TextStyle(
+                                  color: colorScheme.onPrimaryContainer,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12,
                                 ),
                               ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Add up to 5 clear photos of the product',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: colorScheme.onSurfaceVariant),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Image Grid
+                        if (images.isNotEmpty) ...[
+                          SizedBox(
+                            height: 120,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: images.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  margin: const EdgeInsets.only(right: 12),
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: Border.all(
+                                            color: colorScheme.outlineVariant,
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          child: Image.file(
+                                            images[index],
+                                            width: 120,
+                                            height: 120,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        right: 8,
+                                        child: GestureDetector(
+                                          onTap: () => _removeImage(index),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: colorScheme.error,
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withValues(alpha: 0.2),
+                                                  blurRadius: 4,
+                                                  offset: const Offset(0, 2),
+                                                ),
+                                              ],
+                                            ),
+                                            child: const Icon(
+                                              Icons.close,
+                                              size: 16,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
                           ),
+                          const SizedBox(height: 16),
                         ],
-                      ),
-                    );
-                  },
-                ),
-              ),
 
-            const SizedBox(height: 10),
+                        // Empty State
+                        if (images.isEmpty) ...[
+                          Container(
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainerHighest
+                                  .withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: colorScheme.outlineVariant.withValues(
+                                  alpha: 0.5,
+                                ),
+                                style: BorderStyle.solid,
+                              ),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add_photo_alternate_outlined,
+                                    size: 32,
+                                    color: colorScheme.onSurfaceVariant
+                                        .withValues(alpha: 0.6),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'No images added yet',
+                                    style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant
+                                          .withValues(alpha: 0.6),
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
 
-            // Image Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: images.length < 3 ? _takePicture : null,
-                    icon: const Icon(Icons.camera_alt),
-                    label: const Text('Camera'),
+                        // Image Buttons
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: images.length < 5
+                                    ? _takePicture
+                                    : null,
+                                icon: const Icon(Icons.camera_alt),
+                                label: const Text('Camera'),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  backgroundColor: images.length < 3
+                                      ? colorScheme.primaryContainer.withValues(
+                                          alpha: 0.7,
+                                        )
+                                      : colorScheme.surfaceContainerHighest,
+                                  foregroundColor: images.length < 3
+                                      ? colorScheme.onPrimaryContainer
+                                      : colorScheme.onSurfaceVariant,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: BorderSide(
+                                      color: colorScheme.outlineVariant,
+                                      width: 1,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: images.length < 5
+                                    ? _pickImages
+                                    : null,
+                                icon: const Icon(Icons.photo_library),
+                                label: const Text('Gallery'),
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  backgroundColor: images.length < 3
+                                      ? colorScheme.primaryContainer.withValues(
+                                          alpha: 0.7,
+                                        )
+                                      : colorScheme.surfaceContainerHighest,
+                                  foregroundColor: images.length < 3
+                                      ? colorScheme.onPrimaryContainer
+                                      : colorScheme.onSurfaceVariant,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                    side: BorderSide(
+                                      color: colorScheme.outlineVariant,
+                                      width: 1,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: images.length < 3 ? _pickImages : null,
-                    icon: const Icon(Icons.photo_library),
-                    label: const Text('Gallery'),
-                  ),
+
+                const SizedBox(height: 32),
+
+                CustomButtonWidget(
+                  text: "Submit",
+                  onPressed: _submitReport,
+                  state: reportAsync.isLoading
+                      ? ButtonState.loading
+                      : ButtonState.idle,
                 ),
+                const SizedBox(height: 16),
               ],
             ),
-
-            const Spacer(),
-
-            // Submit Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed:
-                    gtin.isNotEmpty &&
-                        images.isNotEmpty &&
-                        !reportAsync.isLoading
-                    ? _submitReport
-                    : null,
-                child: reportAsync.isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('Submit Report'),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
